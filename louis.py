@@ -3,20 +3,19 @@
 # Louis.py - whois analyser tool
 # By raz0rG1rl
 # -----------------------------------------------------
-# Reminders
-# AF_INET = Ipv4
-# AF_INET6 = Ipv6
-# -----------------------------------------------------
 
-# Import socket module
-import socket
-# Create instance of socket
+import socket, sys
+
+# Request to whois.iana.org
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Stabilish connection with socket
-s.connect(("200.160.2.3", 43))
-# Send message to url
-s.send("businesscorp.com.br", 80)
-# Size of bytes to receive
-response = s.recv(1024)
-# Print the response
-print(response)
+s.connect(("whois.iana.org", 43))
+s.send(sys.argv[1]+"\r\n")
+response = s.recv(1024).split()
+whois = response[19]
+
+# Request to refer whois
+s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s2.connect((whois, 43))
+s2.send(sys.argv[1]+"\r\n")
+whoisResponse = s2.recv(1024)
+print(whoisResponse)
